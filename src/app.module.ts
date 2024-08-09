@@ -8,7 +8,7 @@ import { PrismaModule } from './shared/prisma/prisma.module';
 @Module({
   imports: [
     ConfigModule.forRoot(ConfigModuleOptions()),
-    // PrismaModule
+    PrismaModule
   ],
   controllers: [AppController],
   providers: [AppService],

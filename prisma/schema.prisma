@@ -12,3 +12,20 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+
+enum PaymentStatus {
+  INIT
+  PENDING
+  REJECT
+  ACCEPT
+}
+
+model Payment {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  paymentStatus PaymentStatus
+  amount        Float
+  tokenName     String
+  walletAddress String
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}

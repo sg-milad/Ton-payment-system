@@ -26,9 +26,14 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.4.0",
     "@prisma/client": "^5.18.0",
+    "@ton/core": "^0.56.3",
+    "@ton/crypto": "^3.3.0",
+    "@ton/ton": "^14.0.0",
+    "@trustwallet/wallet-core": "^4.1.4",
     "prisma": "^5.18.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "tonweb": "^0.0.66"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

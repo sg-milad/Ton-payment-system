@@ -25,6 +25,7 @@
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.4.0",
+    "@orbs-network/ton-access": "^2.3.3",
     "@prisma/client": "^5.18.0",
     "@ton/core": "^0.56.3",
     "@ton/crypto": "^3.3.0",

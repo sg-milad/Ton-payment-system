@@ -5,12 +5,14 @@ import { ConfigModule } from '@nestjs/config';
 import { ConfigModuleOptions } from './configs/config.module.options';
 import { PrismaModule } from './shared/prisma/prisma.module';
 import { WalletModule } from './wallet/wallet.module';
+import { TonModule } from './ton/ton.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(ConfigModuleOptions()),
     PrismaModule,
-    WalletModule
+    WalletModule,
+    TonModule
   ],
   controllers: [AppController],
   providers: [AppService],

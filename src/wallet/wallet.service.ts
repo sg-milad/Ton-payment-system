@@ -1,5 +1,8 @@
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { Address } from "@ton/core";
+import { keyPairFromSecretKey, mnemonicToHDSeed } from "@ton/crypto";
+import { bytesToMnemonicIndexes, mnemonicFromRandomSeed, mnemonicToWalletKey } from "@ton/crypto/dist/mnemonic/mnemonic";
 import { initWasm, WalletCore } from "@trustwallet/wallet-core";
 import { PrivateKey } from "@trustwallet/wallet-core/dist/src/wallet-core";
 
@@ -11,30 +14,31 @@ export class WalletService implements OnModuleInit {
     constructor(private configService: ConfigService) { }
     async onModuleInit() {
         this.walletCore = await initWasm();
+        // const a = await this.createWallet(0, 0, 0)
+        // console.log(a);
+
     }
 
-    async createWallet(account: number, change: number, index: number): Promise<PrivateKey> {
+    async createWallet(account: number, change: number, index: number) {
         if (!this.walletCore) {
             await this.onModuleInit();
         }
-        const { HDWallet, CoinType } = this.walletCore;
+        const { HDWallet, CoinType, AnyAddress } = this.walletCore;
         const mnemonic = this.configService.get("wallet.mnemonic")
         const passphrase = this.configService.get("wallet.passphrase")
+        console.log(mnemonic);
 
         const wallet = HDWallet.createWithMnemonic(mnemonic, passphrase);
-        return wallet.getDerivedKey(CoinType.ton, account, change, index);
-    }
-    async getAddress(account: number, change: number, index: number) {
-        if (!this.walletCore) {
-            await this.onModuleInit();
-        }
-        const { AnyAddress, CoinType } = this.walletCore;
 
-        const privateKey = await this.createWallet(account, change, index);
+        const privateKey = wallet.getDerivedKey(CoinType.ton, account, change, index);
         const publicKey = privateKey.getPublicKey(CoinType.ton);
 
         const rawAddress = AnyAddress.createWithPublicKey(publicKey, CoinType.ton);
-        return rawAddress.description();
+        Address.parseFriendly(rawAddress.description()).address.toString()
+        return {
+            privateKey: privateKey,
+            publicKey: Address.parseFriendly(rawAddress.description()).address.toString()
+        }
     }
 
     convertPrivateKeyToHexadecimal(privateKey: Uint8Array) {

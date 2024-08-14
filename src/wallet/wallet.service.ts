@@ -14,9 +14,9 @@ export class WalletService implements OnModuleInit {
     constructor(private configService: ConfigService) { }
     async onModuleInit() {
         this.walletCore = await initWasm();
-        // const a = await this.createWallet(0, 0, 0)
-        // console.log(a);
-
+        if (!this.walletCore) {
+            throw new Error('Failed to initialize WalletCore');
+        }
     }
 
     async createWallet(account: number, change: number, index: number) {
@@ -26,7 +26,6 @@ export class WalletService implements OnModuleInit {
         const { HDWallet, CoinType, AnyAddress } = this.walletCore;
         const mnemonic = this.configService.get("wallet.mnemonic")
         const passphrase = this.configService.get("wallet.passphrase")
-        console.log(mnemonic);
 
         const wallet = HDWallet.createWithMnemonic(mnemonic, passphrase);
 

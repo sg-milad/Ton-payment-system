@@ -4,6 +4,9 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// npx prisma generate
+// npx prisma db push
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -21,11 +24,11 @@ enum PaymentStatus {
 }
 
 model Payment {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
-  paymentStatus PaymentStatus
-  amount        Float
-  tokenName     String
-  walletAddress String
+  id            String        @id @default(uuid()) @map("_id") @db.ObjectId
+  paymentStatus PaymentStatus @default(INIT)
+  walletAccount Int           @default(0)
+  walletIndex   Int           @default(0)
+  balance       Int           @default(0)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 }

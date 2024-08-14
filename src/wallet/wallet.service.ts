@@ -1,11 +1,8 @@
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Address } from "@ton/core";
-import { keyPairFromSecretKey, mnemonicToHDSeed } from "@ton/crypto";
-import { bytesToMnemonicIndexes, mnemonicFromRandomSeed, mnemonicToWalletKey } from "@ton/crypto/dist/mnemonic/mnemonic";
 import { initWasm, WalletCore } from "@trustwallet/wallet-core";
 import { PrivateKey } from "@trustwallet/wallet-core/dist/src/wallet-core";
-
 @Injectable()
 export class WalletService implements OnModuleInit {
 
@@ -19,7 +16,10 @@ export class WalletService implements OnModuleInit {
         }
     }
 
-    async createWallet(account: number, change: number, index: number) {
+    async createWallet(account: number, change: number = 0, index: number = 0): Promise<{
+        privateKey: PrivateKey;
+        publicKey: string;
+    }> {
         if (!this.walletCore) {
             await this.onModuleInit();
         }

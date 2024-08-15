@@ -1,31 +1,29 @@
-import { Injectable, OnModuleInit } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { Payment } from "@prisma/client";
 import { PrismaService } from "src/shared/prisma/prisma.service";
 
 @Injectable()
-export class PaymentService implements OnModuleInit {
+export class PaymentService {
     constructor(
         private prisma: PrismaService
     ) { }
-
-    async onModuleInit() {
-
-    }
-    async generateWallet(): Promise<Payment> {
+    async createPayment(): Promise<Payment> {
         const latestPayment = await this.prisma.payment.findFirst({
             orderBy: {
                 createdAt: 'desc',
             },
         });
         if (latestPayment) {
+            const incrementedWalletAccount = latestPayment.walletAccount + 1;
+            const incrementedWalletIndex = latestPayment.walletIndex + 1;
             return await this.prisma.payment.create({
                 data: {
                     balance: 0,
                     paymentStatus: "INIT",
-                    walletAccount: latestPayment.walletAccount++,
-                    walletIndex: latestPayment.walletIndex++,
+                    walletAccount: incrementedWalletAccount,
+                    walletIndex: incrementedWalletIndex,
                 }
-            })
+            });
         }
         return await this.prisma.payment.create({
             data: {
@@ -35,5 +33,8 @@ export class PaymentService implements OnModuleInit {
                 walletIndex: 0,
             }
         })
+    }
+    async findInitPayment(): Promise<Payment[]> {
+        return await this.prisma.payment.findMany({ where: { paymentStatus: "INIT" } })
     }
 }

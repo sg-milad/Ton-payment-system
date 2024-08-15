@@ -18,7 +18,7 @@ export class WalletService implements OnModuleInit {
 
     async createWallet(account: number, change: number = 0, index: number = 0): Promise<{
         privateKey: PrivateKey;
-        publicKey: string;
+        publicKey: Address;
     }> {
         if (!this.walletCore) {
             await this.onModuleInit();
@@ -36,7 +36,7 @@ export class WalletService implements OnModuleInit {
         Address.parseFriendly(rawAddress.description()).address.toString()
         return {
             privateKey: privateKey,
-            publicKey: Address.parseFriendly(rawAddress.description()).address.toString()
+            publicKey: Address.parseFriendly(rawAddress.description()).address
         }
     }
 

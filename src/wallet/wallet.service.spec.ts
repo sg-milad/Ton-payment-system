@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { WalletService } from './wallet.service';
 import { initWasm } from '@trustwallet/wallet-core';
+import { Address } from '@ton/core';
 
 describe('WalletService', () => {
     let service: WalletService;
@@ -41,14 +42,12 @@ describe('WalletService', () => {
 
             expect(wallet).toHaveProperty('privateKey');
             expect(wallet).toHaveProperty('publicKey');
-            expect(typeof wallet.publicKey).toBe('string');
-            expect(wallet.publicKey.length).toBeGreaterThan(0);
+            expect(wallet.publicKey.toString().length).toBeGreaterThan(0);
         });
         it('should not create same public key', async () => {
-            const wallet1 = await service.createWallet(0, 0, 0);
-            const wallet2 = await service.createWallet(1, 0, 0);
-            console.log("1", wallet1.publicKey);
-            console.log('2', wallet2.publicKey);
+            const wallet1 = await service.createWallet(0, 0, 1);
+            const wallet2 = await service.createWallet(1, 0, 23);
+
             expect(wallet1).toHaveProperty('privateKey');
             expect(wallet2).toHaveProperty('privateKey');
 

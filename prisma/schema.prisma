@@ -24,11 +24,12 @@ enum PaymentStatus {
 }
 
 model Payment {
-  id            String        @id @default(uuid()) @map("_id") @db.ObjectId
+  id            String        @id @default(uuid()) @map("_id")
   paymentStatus PaymentStatus @default(INIT)
   walletAccount Int           @default(0)
   walletIndex   Int           @default(0)
   balance       Int           @default(0)
+  walletSrc     String? // sourc wallet
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 }

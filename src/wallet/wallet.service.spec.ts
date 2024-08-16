@@ -3,14 +3,13 @@ import { ConfigService } from '@nestjs/config';
 import { WalletService } from './wallet.service';
 import { initWasm } from '@trustwallet/wallet-core';
 import { Address } from '@ton/core';
-
+import TonWeb from "tonweb";
 describe('WalletService', () => {
     let service: WalletService;
     let configService: ConfigService;
 
     beforeAll(async () => {
         await initWasm();
-
         const module: TestingModule = await Test.createTestingModule({
             providers: [
                 WalletService,
@@ -42,6 +41,7 @@ describe('WalletService', () => {
 
             expect(wallet).toHaveProperty('privateKey');
             expect(wallet).toHaveProperty('publicKey');
+            expect(TonWeb.utils.Address.isValid(wallet.publicKey.toString())).toBe(true)
             expect(wallet.publicKey.toString().length).toBeGreaterThan(0);
         });
         it('should not create same public key', async () => {
@@ -50,7 +50,8 @@ describe('WalletService', () => {
 
             expect(wallet1).toHaveProperty('privateKey');
             expect(wallet2).toHaveProperty('privateKey');
-
+            expect(TonWeb.utils.Address.isValid(wallet2.publicKey.toString())).toBe(true)
+            expect(TonWeb.utils.Address.isValid(wallet1.publicKey.toString())).toBe(true)
             expect(wallet1).toHaveProperty('publicKey');
             expect(wallet2).toHaveProperty('publicKey');
 

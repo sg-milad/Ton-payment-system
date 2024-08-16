@@ -33,7 +33,7 @@ export class WalletService implements OnModuleInit {
         const publicKey = privateKey.getPublicKey(CoinType.ton);
 
         const rawAddress = AnyAddress.createWithPublicKey(publicKey, CoinType.ton);
-        Address.parseFriendly(rawAddress.description()).address.toString()
+
         return {
             privateKey: privateKey,
             publicKey: Address.parseFriendly(rawAddress.description()).address
@@ -41,7 +41,8 @@ export class WalletService implements OnModuleInit {
     }
 
     convertPrivateKeyToHexadecimal(privateKey: Uint8Array) {
-        const { HexCoding } = this.walletCore;
+        const { HexCoding, Base64 } = this.walletCore;
+        // return Base64.encode(privateKey)
         return HexCoding.encode(privateKey).substring(2)
     }
 }

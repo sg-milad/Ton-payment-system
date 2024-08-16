@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Payment } from "@prisma/client";
+import { Payment, Prisma } from "@prisma/client";
 import { PrismaService } from "src/shared/prisma/prisma.service";
 
 @Injectable()
@@ -36,5 +36,8 @@ export class PaymentService {
     }
     async findInitPayment(): Promise<Payment[]> {
         return await this.prisma.payment.findMany({ where: { paymentStatus: "INIT" } })
+    }
+    async updatePayment(where: Prisma.PaymentWhereUniqueInput, data: Prisma.PaymentUpdateInput) {
+        return await this.prisma.payment.update({ data, where })
     }
 }

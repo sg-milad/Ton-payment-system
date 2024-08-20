@@ -28,8 +28,9 @@ model Payment {
   paymentStatus PaymentStatus @default(INIT)
   walletAccount Int           @default(0)
   walletIndex   Int           @default(0)
-  balance       Int           @default(0)
-  walletSrc     String? // sourc wallet
+  balance       String?
+  walletSrc     String? // sourc wallet address
+  walletDes     String? // our wallet address
   tx            String?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt

@@ -18,7 +18,6 @@ export class PaymentService {
             const incrementedWalletIndex = latestPayment.walletIndex + 1;
             return await this.prisma.payment.create({
                 data: {
-                    balance: 0,
                     paymentStatus: "INIT",
                     walletAccount: incrementedWalletAccount,
                     walletIndex: incrementedWalletIndex,
@@ -27,7 +26,6 @@ export class PaymentService {
         }
         return await this.prisma.payment.create({
             data: {
-                balance: 0,
                 paymentStatus: "INIT",
                 walletAccount: 0,
                 walletIndex: 0,
@@ -37,7 +35,16 @@ export class PaymentService {
     async findInitPayment(): Promise<Payment[]> {
         return await this.prisma.payment.findMany({ where: { paymentStatus: "INIT" } })
     }
+    async findPendingPayment(): Promise<Payment[]> {
+        return await this.prisma.payment.findMany({ where: { paymentStatus: "PENDING" } })
+    }
     async updatePayment(where: Prisma.PaymentWhereUniqueInput, data: Prisma.PaymentUpdateInput) {
         return await this.prisma.payment.update({ data, where })
+    }
+    async findOne(where: Prisma.PaymentFindUniqueArgs) {
+        return await this.prisma.payment.findUnique(where)
+    }
+    async findPayment(id: string) {
+        return await this.findOne({ where: { id } })
     }
 }

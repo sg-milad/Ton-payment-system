@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { WalletService } from './wallet.service';
 import { initWasm } from '@trustwallet/wallet-core';
-import { Address } from '@ton/core';
 import TonWeb from "tonweb";
 describe('WalletService', () => {
     let service: WalletService;
@@ -26,6 +25,7 @@ describe('WalletService', () => {
             ],
         }).compile();
 
+
         service = module.get<WalletService>(WalletService);
         configService = module.get<ConfigService>(ConfigService);
 
@@ -36,38 +36,21 @@ describe('WalletService', () => {
     });
 
     describe('createWallet', () => {
-        it('should create a wallet and return private and public keys', async () => {
+        it('should create a valid private key', async () => {
             const wallet = await service.createWallet(0, 0, 0);
-
-            expect(wallet).toHaveProperty('privateKey');
-            expect(wallet).toHaveProperty('publicKey');
-            expect(TonWeb.utils.Address.isValid(wallet.publicKey.toString())).toBe(true)
-            expect(wallet.publicKey.toString().length).toBeGreaterThan(0);
+            const publicKey = await service.keyPairToPublicKey(wallet)
+            expect(wallet).toHaveProperty("publicKey")
+            expect(wallet).toHaveProperty("secretKey")
+            expect(TonWeb.utils.Address.isValid(publicKey)).toBe(true)
         });
-        it('should not create same public key', async () => {
+        it('should not create two different public key', async () => {
             const wallet1 = await service.createWallet(0, 0, 1);
             const wallet2 = await service.createWallet(1, 0, 23);
-
-            expect(wallet1).toHaveProperty('privateKey');
-            expect(wallet2).toHaveProperty('privateKey');
-            expect(TonWeb.utils.Address.isValid(wallet2.publicKey.toString())).toBe(true)
-            expect(TonWeb.utils.Address.isValid(wallet1.publicKey.toString())).toBe(true)
-            expect(wallet1).toHaveProperty('publicKey');
-            expect(wallet2).toHaveProperty('publicKey');
-
-            expect(wallet1.publicKey).not.toEqual(wallet2.publicKey)
-        });
-
-    });
-
-    describe('convertPrivateKeyToHexadecimal', () => {
-        it('should convert private key to hexadecimal', async () => {
-            const wallet = await service.createWallet(0, 0, 0);
-            const hexPrivateKey = service.convertPrivateKeyToHexadecimal(wallet.privateKey.data());
-
-            expect(typeof hexPrivateKey).toBe('string');
-            expect(hexPrivateKey.length).toBe(64); // 32 bytes * 2 characters per byte
-            expect(/^[0-9a-f]+$/.test(hexPrivateKey)).toBe(true); // Should only contain hexadecimal characters
+            const publicKey1 = await service.keyPairToPublicKey(wallet1)
+            const publicKey2 = await service.keyPairToPublicKey(wallet2)
+            expect(TonWeb.utils.Address.isValid(publicKey1)).toBe(true)
+            expect(TonWeb.utils.Address.isValid(publicKey1)).toBe(true)
+            expect(publicKey1).not.toEqual(publicKey2)
         });
     });
 });

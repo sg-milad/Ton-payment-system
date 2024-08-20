@@ -5,7 +5,7 @@ import { developmentEnv } from "./helper/helper";
 const configure = (app: INestApplication) => {
     if (!developmentEnv()) return;
     const swaggerConfig = new DocumentBuilder()
-        .setTitle(`exchange rate API's`)
+        .setTitle(`ton payment system`)
         .setDescription("Web Services")
         .setVersion("1.0.0")
         .build();

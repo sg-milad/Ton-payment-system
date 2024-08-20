@@ -20,10 +20,12 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@nestjs/bullmq": "^10.2.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.2",
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/schedule": "^4.1.0",
     "@nestjs/swagger": "^7.4.0",
     "@orbs-network/ton-access": "^2.3.3",
     "@prisma/client": "^5.18.0",
@@ -31,6 +33,7 @@
     "@ton/crypto": "^3.3.0",
     "@ton/ton": "^14.0.0",
     "@trustwallet/wallet-core": "^4.1.4",
+    "bullmq": "^5.12.8",
     "prisma": "^5.18.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",

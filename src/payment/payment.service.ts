@@ -1,11 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { Payment, Prisma } from "@prisma/client";
 import { PrismaService } from "src/shared/prisma/prisma.service";
+import { WalletService } from "src/wallet/wallet.service";
 
 @Injectable()
 export class PaymentService {
     constructor(
-        private prisma: PrismaService
+        private prisma: PrismaService,
+        private walletService: WalletService
     ) { }
     async createPayment(): Promise<Payment> {
         const latestPayment = await this.prisma.payment.findFirst({
@@ -46,5 +48,11 @@ export class PaymentService {
     }
     async findPayment(id: string) {
         return await this.findOne({ where: { id } })
+    }
+    async createPaymentWithWallet() {
+        const payment = await this.createPayment()
+        const wallet = await this.walletService.createWallet(payment.walletAccount, 0, payment.walletIndex)
+        const publicKey = await this.walletService.keyPairToPublicKey(wallet)
+        return { ...payment, publicKey }
     }
 }

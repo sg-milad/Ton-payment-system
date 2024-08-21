@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from "@nestjs/common";
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { getHttpEndpoint } from "@orbs-network/ton-access";
 import { KeyPair, keyPairFromSeed } from "@ton/crypto";
@@ -7,7 +7,6 @@ import { PrivateKey } from "@trustwallet/wallet-core/dist/src/wallet-core";
 import TonWeb from "tonweb";
 @Injectable()
 export class WalletService implements OnModuleInit {
-
     private walletCore: WalletCore;
     private tonWeb: TonWeb
 
@@ -17,7 +16,7 @@ export class WalletService implements OnModuleInit {
         this.tonWeb = new TonWeb(new TonWeb.HttpProvider(endpoint));
         this.walletCore = await initWasm();
         if (!this.walletCore) {
-            throw new Error('Failed to initialize WalletCore');
+            throw Error("Failed to initialize WalletCore");
         }
     }
 

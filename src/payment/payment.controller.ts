@@ -1,27 +1,25 @@
-import { Controller, Get, Param, Post } from "@nestjs/common";
+import { Controller, Get, Param, ParseUUIDPipe, Post } from "@nestjs/common";
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
-import { TonService } from "./ton.service";
-import { CreatePaymentResponse } from "./dto/create.payment.response.dto";
+import { CreatePaymentResponse } from "../ton/dto/create.payment.response.dto";
 import { PaymentService } from "src/payment/payment.service";
-import { PaymentResponseDto } from "./dto/payment.response.dto";
+import { PaymentResponseDto } from "../ton/dto/payment.response.dto";
 
 @Controller("payment")
 @ApiTags("Payment")
-export class TonController {
+export class PaymentController {
     constructor(
-        private tonService: TonService,
         private paymentService: PaymentService
     ) { }
 
     @Post()
     @ApiOkResponse({ status: 200, type: CreatePaymentResponse })
     createPayment() {
-        return this.tonService.generatePayment()
+        return this.paymentService.createPaymentWithWallet()
     }
 
     @Get("/:id")
     @ApiOkResponse({ status: 200, type: PaymentResponseDto })
-    async getPayment(@Param("id") id: string) {
+    async getPayment(@Param("id", ParseUUIDPipe) id: string) {
         return await this.paymentService.findPayment(id)
     }
 }

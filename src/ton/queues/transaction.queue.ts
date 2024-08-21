@@ -1,7 +1,7 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
 import { TransactionPaymentJob } from '../types/transaction.type';
-import { PaymentQUEUE } from '../constants/payment.bull.costant';
+import { PaymentQUEUE } from '../constants/payment.bull.constant';
 import { PaymentService } from 'src/payment/payment.service';
 import { TonService } from '../ton.service';
 import { fromNano, toNano } from '@ton/core';

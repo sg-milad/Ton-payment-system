@@ -3,7 +3,7 @@ import { TonService } from "./ton.service";
 import { WalletModule } from "src/wallet/wallet.module";
 import { PaymentModule } from "src/payment/payment.module";
 import { BullModule } from "@nestjs/bullmq";
-import { PaymentQUEUE } from "./constants/payment.bull.costant";
+import { PaymentQUEUE } from "./constants/payment.bull.constant";
 import { TransactionConsumer } from "./queues/transaction.queue";
 
 @Module({

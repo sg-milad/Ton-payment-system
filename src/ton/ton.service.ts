@@ -6,7 +6,7 @@ import { Address, fromNano, internal, SendMode, toNano, TonClient, WalletContrac
 import { Queue } from "bullmq";
 import { PaymentService } from "src/payment/payment.service";
 import { WalletService } from "src/wallet/wallet.service";
-import { PaymentJob, PaymentQUEUE } from "./constants/payment.bull.costant";
+import { PaymentJob, PaymentQUEUE } from "./constants/payment.bull.constant";
 import { TransactionType } from "./types/transaction.type";
 import { ConfigService } from "@nestjs/config";
 import { KeyPair } from "@ton/crypto";

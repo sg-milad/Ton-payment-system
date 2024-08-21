@@ -28,3 +28,8 @@ after build please open [localhost](http://localhost:3000/docs).
 ## Todo
 
 -   add more tests
+
+## More information
+- [working with Ton wallets](https://tonhelloworld.com/01-wallet/)
+- [type of messages in Ton](https://docs.ton.org/develop/smart-contracts/messages)
+- [Payments processing in Ton](https://docs.ton.org/develop/dapps/asset-processing/)

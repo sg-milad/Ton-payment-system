@@ -24,3 +24,7 @@ after build please open [localhost](http://localhost:3000/docs).
 ```
 ~ pnpm test
 ```
+
+## Todo
+
+-   add more tests

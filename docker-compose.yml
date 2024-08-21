@@ -1,11 +1,30 @@
-version: '3.7'
+version: "3.7"
+
 services:
-  mongodb_container:
-    # This image automatically creates a replica set required for transactions
-    image: prismagraphql/mongo-single-replica:4.4.3-bionic
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: pass
-      INIT_WAIT_SEC: 3
-    ports:
-      - 27017:27017
+    mongodb:
+        # This image automatically creates a replica set required for transactions
+        image: prismagraphql/mongo-single-replica:4.4.3-bionic
+        container_name: mongodb
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: pass
+            INIT_WAIT_SEC: 3
+        ports:
+            - 27017:27017
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: ton_payment
+        env_file:
+            - .env
+        ports:
+            - "3000:3000"
+        depends_on:
+            - mongodb
+            - redis
+    redis:
+        image: redis:latest
+        container_name: myredis
+        ports:
+            - 6379:6379

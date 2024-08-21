@@ -11,3 +11,7 @@ export function developmentEnv() {
 export function productionEnv() {
     return processEnv() == "prod";
 }
+
+export function nanofonsToTon(nanofons: number): string {
+    return (nanofons / 1e9).toFixed(9)
+}

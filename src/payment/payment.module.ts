@@ -8,4 +8,4 @@ import { PaymentController } from "./payment.controller";
     controllers: [PaymentController],
     exports: [PaymentService],
 })
-export class PaymentModule { }
+export class PaymentModule {}

@@ -8,11 +8,11 @@ import TonWeb from "tonweb";
 @Injectable()
 export class WalletService implements OnModuleInit {
     private walletCore: WalletCore;
-    private tonWeb: TonWeb
+    private tonWeb: TonWeb;
 
-    constructor(private configService: ConfigService) { }
+    constructor(private configService: ConfigService) {}
     async onModuleInit() {
-        const endpoint = await getHttpEndpoint({ network: "mainnet" })
+        const endpoint = await getHttpEndpoint({ network: "mainnet" });
         this.tonWeb = new TonWeb(new TonWeb.HttpProvider(endpoint));
         this.walletCore = await initWasm();
         if (!this.walletCore) {
@@ -25,25 +25,25 @@ export class WalletService implements OnModuleInit {
             await this.onModuleInit();
         }
         const { HDWallet, CoinType } = this.walletCore;
-        const mnemonic = this.configService.get("wallet.mnemonic")
-        const passphrase = this.configService.get("wallet.passphrase")
+        const mnemonic = this.configService.get("wallet.mnemonic");
+        const passphrase = this.configService.get("wallet.passphrase");
 
         const wallet = HDWallet.createWithMnemonic(mnemonic, passphrase);
         const privateKey = wallet.getDerivedKey(CoinType.ton, account, change, index);
-        return this.seedToKeyPair(privateKey)
+        return this.seedToKeyPair(privateKey);
     }
 
     seedToKeyPair(privateKey: PrivateKey): KeyPair {
-        return keyPairFromSeed(Buffer.from(privateKey.data()))
+        return keyPairFromSeed(Buffer.from(privateKey.data()));
     }
 
     async keyPairToPublicKey(keyPair: KeyPair): Promise<string> {
-        const wallet = await this.tonWeb.wallet.create({ publicKey: keyPair.publicKey }).getAddress()
-        return wallet.toString(true, true, false)
+        const wallet = await this.tonWeb.wallet.create({ publicKey: keyPair.publicKey }).getAddress();
+        return wallet.toString(true, true, false);
     }
 
     async privatekeyToPublicKey(privateKey: PrivateKey): Promise<string> {
-        const keyPair = this.seedToKeyPair(privateKey)
-        return await this.keyPairToPublicKey(keyPair)
+        const keyPair = this.seedToKeyPair(privateKey);
+        return await this.keyPairToPublicKey(keyPair);
     }
 }

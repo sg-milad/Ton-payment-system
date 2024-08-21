@@ -13,5 +13,5 @@ export function productionEnv() {
 }
 
 export function nanofonsToTon(nanofons: number): string {
-    return (nanofons / 1e9).toFixed(9)
+    return (nanofons / 1e9).toFixed(9);
 }

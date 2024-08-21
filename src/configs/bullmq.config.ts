@@ -4,7 +4,7 @@ import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class BullConfigService implements SharedBullConfigurationFactory {
-    constructor(private configService: ConfigService) { }
+    constructor(private configService: ConfigService) {}
     createSharedConfiguration(): BullRootModuleOptions {
         return {
             connection: {

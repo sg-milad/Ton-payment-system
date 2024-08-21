@@ -7,19 +7,17 @@ import { PaymentResponseDto } from "../ton/dto/payment.response.dto";
 @Controller("payment")
 @ApiTags("Payment")
 export class PaymentController {
-    constructor(
-        private paymentService: PaymentService
-    ) { }
+    constructor(private paymentService: PaymentService) {}
 
     @Post()
     @ApiOkResponse({ status: 200, type: CreatePaymentResponse })
     createPayment() {
-        return this.paymentService.createPaymentWithWallet()
+        return this.paymentService.createPaymentWithWallet();
     }
 
     @Get("/:id")
     @ApiOkResponse({ status: 200, type: PaymentResponseDto })
     async getPayment(@Param("id", ParseUUIDPipe) id: string) {
-        return await this.paymentService.findPayment(id)
+        return await this.paymentService.findPayment(id);
     }
 }

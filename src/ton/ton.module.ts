@@ -12,9 +12,9 @@ import { TransactionConsumer } from "./queues/transaction.queue";
             name: PaymentQUEUE,
         }),
         WalletModule,
-        PaymentModule
+        PaymentModule,
     ],
     providers: [TonService, TransactionConsumer],
-    exports: [TonService]
+    exports: [TonService],
 })
-export class TonModule { }
+export class TonModule {}

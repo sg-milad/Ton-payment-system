@@ -7,12 +7,12 @@ import { WalletService } from "src/wallet/wallet.service";
 export class PaymentService {
     constructor(
         private prisma: PrismaService,
-        private walletService: WalletService
-    ) { }
+        private walletService: WalletService,
+    ) {}
     async createPayment(): Promise<Payment> {
         const latestPayment = await this.prisma.payment.findFirst({
             orderBy: {
-                createdAt: 'desc',
+                createdAt: "desc",
             },
         });
         if (latestPayment) {
@@ -23,7 +23,7 @@ export class PaymentService {
                     paymentStatus: "INIT",
                     walletAccount: incrementedWalletAccount,
                     walletIndex: incrementedWalletIndex,
-                }
+                },
             });
         }
         return await this.prisma.payment.create({
@@ -31,28 +31,28 @@ export class PaymentService {
                 paymentStatus: "INIT",
                 walletAccount: 0,
                 walletIndex: 0,
-            }
-        })
+            },
+        });
     }
     async findInitPayment(): Promise<Payment[]> {
-        return await this.prisma.payment.findMany({ where: { paymentStatus: "INIT" } })
+        return await this.prisma.payment.findMany({ where: { paymentStatus: "INIT" } });
     }
     async findPendingPayment(): Promise<Payment[]> {
-        return await this.prisma.payment.findMany({ where: { paymentStatus: "PENDING" } })
+        return await this.prisma.payment.findMany({ where: { paymentStatus: "PENDING" } });
     }
     async updatePayment(where: Prisma.PaymentWhereUniqueInput, data: Prisma.PaymentUpdateInput) {
-        return await this.prisma.payment.update({ data, where })
+        return await this.prisma.payment.update({ data, where });
     }
     async findOne(where: Prisma.PaymentFindUniqueArgs) {
-        return await this.prisma.payment.findUnique(where)
+        return await this.prisma.payment.findUnique(where);
     }
     async findPayment(id: string) {
-        return await this.findOne({ where: { id } })
+        return await this.findOne({ where: { id } });
     }
     async createPaymentWithWallet() {
-        const payment = await this.createPayment()
-        const wallet = await this.walletService.createWallet(payment.walletAccount, 0, payment.walletIndex)
-        const publicKey = await this.walletService.keyPairToPublicKey(wallet)
-        return { ...payment, publicKey }
+        const payment = await this.createPayment();
+        const wallet = await this.walletService.createWallet(payment.walletAccount, 0, payment.walletIndex);
+        const publicKey = await this.walletService.keyPairToPublicKey(wallet);
+        return { ...payment, publicKey };
     }
 }

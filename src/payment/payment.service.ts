@@ -8,13 +8,11 @@ export class PaymentService {
     constructor(
         private prisma: PrismaService,
         private walletService: WalletService,
-    ) {}
+    ) { }
+
     async createPayment(): Promise<Payment> {
-        const latestPayment = await this.prisma.payment.findFirst({
-            orderBy: {
-                createdAt: "desc",
-            },
-        });
+        const latestPayment = await this.findLatestPayment();
+
         if (latestPayment) {
             const incrementedWalletAccount = latestPayment.walletAccount + 1;
             const incrementedWalletIndex = latestPayment.walletIndex + 1;
@@ -31,6 +29,13 @@ export class PaymentService {
                 paymentStatus: "INIT",
                 walletAccount: 0,
                 walletIndex: 0,
+            },
+        });
+    }
+    async findLatestPayment(): Promise<Payment | null> {
+        return await this.prisma.payment.findFirst({
+            orderBy: {
+                createdAt: "desc",
             },
         });
     }

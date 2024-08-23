@@ -8,7 +8,7 @@ export class PaymentService {
     constructor(
         private prisma: PrismaService,
         private walletService: WalletService,
-    ) { }
+    ) {}
 
     async createPayment(): Promise<Payment> {
         const latestPayment = await this.findLatestPayment();

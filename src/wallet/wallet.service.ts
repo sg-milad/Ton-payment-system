@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { KeyPair, keyPairFromSeed } from "@ton/crypto";
-import { WalletContractV1R3, WalletContractV3R1, WalletContractV3R2, WalletContractV5R1 } from "@ton/ton";
+import { WalletContractV3R1 } from "@ton/ton";
 import { initWasm, WalletCore } from "@trustwallet/wallet-core";
 import { PrivateKey } from "@trustwallet/wallet-core/dist/src/wallet-core";
 
@@ -9,7 +9,7 @@ import { PrivateKey } from "@trustwallet/wallet-core/dist/src/wallet-core";
 export class WalletService implements OnModuleInit {
     private walletCore: WalletCore;
 
-    constructor(private configService: ConfigService) { }
+    constructor(private configService: ConfigService) {}
     async onModuleInit() {
         this.walletCore = await initWasm();
         if (!this.walletCore) {
@@ -35,8 +35,8 @@ export class WalletService implements OnModuleInit {
     }
 
     keyPairToPublicKey(wallet: KeyPair): string {
-        const publicKey = WalletContractV3R1.create({ publicKey: wallet.publicKey, workchain: 0 })
-        return publicKey.address.toString({ urlSafe: true, bounceable: false })
+        const publicKey = WalletContractV3R1.create({ publicKey: wallet.publicKey, workchain: 0 });
+        return publicKey.address.toString({ urlSafe: true, bounceable: false });
     }
 
     privatekeyToPublicKey(privateKey: PrivateKey): string {

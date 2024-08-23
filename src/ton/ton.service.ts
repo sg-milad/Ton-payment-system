@@ -20,7 +20,7 @@ export class TonService implements OnModuleInit {
         private PaymentService: PaymentService,
         private configService: ConfigService,
         @InjectQueue(PaymentQUEUE) private paymentQueue: Queue,
-    ) {}
+    ) { }
 
     async onModuleInit() {
         try {
@@ -40,7 +40,7 @@ export class TonService implements OnModuleInit {
         if (getInitPayment.length === 0) return;
         for (const payment of getInitPayment) {
             const wallet = await this.walletService.createWallet(payment.walletAccount, 0, payment.walletIndex);
-            const publicKey = await this.walletService.keyPairToPublicKey(wallet);
+            const publicKey = this.walletService.keyPairToPublicKey(wallet);
             const transactions = await this.checkTransactions(publicKey);
             for (const transaction of transactions) {
                 this.logger.log("Transactions", { publicKey, transaction });
@@ -94,7 +94,7 @@ export class TonService implements OnModuleInit {
     }
     async transfer(keyPair: KeyPair) {
         try {
-            const wallet = WalletContractV3R1.create({ publicKey: keyPair.publicKey, workchain: 0 });
+            const wallet = this.walletService.createContractWallet(keyPair)
             const contract = this.client.open(wallet);
             const seqno = await contract.getSeqno();
             return await contract.sendTransfer({

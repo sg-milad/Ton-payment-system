@@ -24,7 +24,7 @@ export class TransactionConsumer extends WorkerHost {
         const { source, tx } = job.data.transaction;
 
         const wallet = await this.walletService.createWallet(walletAccount, 0, walletIndex);
-        const publicKey = await this.walletService.keyPairToPublicKey(wallet);
+        const publicKey = this.walletService.keyPairToPublicKey(wallet);
         this.logger.log("public key:", publicKey);
         const getBalance = await this.tonService.getBalance(publicKey);
         this.logger.log("balance:", getBalance);

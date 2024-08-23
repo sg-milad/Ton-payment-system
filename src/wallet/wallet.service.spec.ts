@@ -38,7 +38,7 @@ describe("WalletService", () => {
     describe("createWallet", () => {
         it("should create a valid private key", async () => {
             const wallet = await service.createWallet(0, 0, 0);
-            const publicKey = await service.keyPairToPublicKey(wallet);
+            const publicKey = service.keyPairToPublicKey(wallet);
             expect(wallet).toHaveProperty("publicKey");
             expect(wallet).toHaveProperty("secretKey");
             expect(TonWeb.utils.Address.isValid(publicKey)).toBe(true);
@@ -46,8 +46,8 @@ describe("WalletService", () => {
         it("should not create two different public key", async () => {
             const wallet1 = await service.createWallet(0, 0, 1);
             const wallet2 = await service.createWallet(1, 0, 23);
-            const publicKey1 = await service.keyPairToPublicKey(wallet1);
-            const publicKey2 = await service.keyPairToPublicKey(wallet2);
+            const publicKey1 = service.keyPairToPublicKey(wallet1);
+            const publicKey2 = service.keyPairToPublicKey(wallet2);
             expect(TonWeb.utils.Address.isValid(publicKey1)).toBe(true);
             expect(TonWeb.utils.Address.isValid(publicKey1)).toBe(true);
             expect(publicKey1).not.toEqual(publicKey2);

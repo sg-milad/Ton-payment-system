@@ -1,19 +1,16 @@
-import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import { Injectable, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { getHttpEndpoint } from "@orbs-network/ton-access";
 import { KeyPair, keyPairFromSeed } from "@ton/crypto";
+import { WalletContractV1R3, WalletContractV3R1, WalletContractV3R2, WalletContractV5R1 } from "@ton/ton";
 import { initWasm, WalletCore } from "@trustwallet/wallet-core";
 import { PrivateKey } from "@trustwallet/wallet-core/dist/src/wallet-core";
-import TonWeb from "tonweb";
+
 @Injectable()
 export class WalletService implements OnModuleInit {
     private walletCore: WalletCore;
-    private tonWeb: TonWeb;
 
-    constructor(private configService: ConfigService) {}
+    constructor(private configService: ConfigService) { }
     async onModuleInit() {
-        const endpoint = await getHttpEndpoint({ network: "mainnet" });
-        this.tonWeb = new TonWeb(new TonWeb.HttpProvider(endpoint));
         this.walletCore = await initWasm();
         if (!this.walletCore) {
             throw Error("Failed to initialize WalletCore");
@@ -37,13 +34,16 @@ export class WalletService implements OnModuleInit {
         return keyPairFromSeed(Buffer.from(privateKey.data()));
     }
 
-    async keyPairToPublicKey(keyPair: KeyPair): Promise<string> {
-        const wallet = await this.tonWeb.wallet.create({ publicKey: keyPair.publicKey }).getAddress();
-        return wallet.toString(true, true, false);
+    keyPairToPublicKey(wallet: KeyPair): string {
+        const publicKey = WalletContractV3R1.create({ publicKey: wallet.publicKey, workchain: 0 })
+        return publicKey.address.toString({ urlSafe: true, bounceable: false })
     }
 
-    async privatekeyToPublicKey(privateKey: PrivateKey): Promise<string> {
+    privatekeyToPublicKey(privateKey: PrivateKey): string {
         const keyPair = this.seedToKeyPair(privateKey);
-        return await this.keyPairToPublicKey(keyPair);
+        return this.keyPairToPublicKey(keyPair);
+    }
+    createContractWallet(keyPair: KeyPair) {
+        return WalletContractV3R1.create({ publicKey: keyPair.publicKey, workchain: 0 });
     }
 }

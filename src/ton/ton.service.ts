@@ -2,7 +2,7 @@ import { InjectQueue } from "@nestjs/bullmq";
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 import { getHttpEndpoint } from "@orbs-network/ton-access";
-import { Address, fromNano, internal, SendMode, toNano, TonClient, WalletContractV3R1 } from "@ton/ton";
+import { Address, fromNano, internal, SendMode, toNano, TonClient } from "@ton/ton";
 import { Queue } from "bullmq";
 import { PaymentService } from "src/payment/payment.service";
 import { WalletService } from "src/wallet/wallet.service";
@@ -20,7 +20,7 @@ export class TonService implements OnModuleInit {
         private PaymentService: PaymentService,
         private configService: ConfigService,
         @InjectQueue(PaymentQUEUE) private paymentQueue: Queue,
-    ) {}
+    ) { }
 
     async onModuleInit() {
         try {
@@ -30,20 +30,28 @@ export class TonService implements OnModuleInit {
             this.client = new TonClient({ endpoint });
         } catch (error) {
             this.logger.error("Failed to initialize TonClient", error);
+            process.exit(1);
         }
     }
 
     @Cron(CronExpression.EVERY_MINUTE)
     async transactionProcess(): Promise<void> {
         const getInitPayment = await this.PaymentService.findInitPayment();
+
         this.logger.log("find init Payment...", getInitPayment);
+
         if (getInitPayment.length === 0) return;
+
         for (const payment of getInitPayment) {
+
             const wallet = await this.walletService.createWallet(payment.walletAccount, 0, payment.walletIndex);
+
             const publicKey = this.walletService.keyPairToPublicKey(wallet);
+
             const transactions = await this.checkTransactions(publicKey);
+
             for (const transaction of transactions) {
-                this.logger.log("Transactions", { publicKey, transaction });
+                this.logger.log("Transactions", { paymentId: payment.id, publicKey, transaction });
                 await this.paymentQueue.add(PaymentJob, { transaction, payment }, { removeOnComplete: true });
             }
         }
@@ -51,16 +59,23 @@ export class TonService implements OnModuleInit {
     @Cron(CronExpression.EVERY_MINUTE)
     async checkPendingPayments() {
         const getPendingPayment = await this.PaymentService.findPendingPayment();
+
         this.logger.log("Check pending payments", getPendingPayment);
+
         for (const payment of getPendingPayment) {
+
             if (payment.walletDes) {
                 const balance = await this.getBalance(payment.walletDes);
-                if (balance > toNano("0.1")) {
+
+                if (balance > toNano("0.01")) {
                     this.logger.log("Transfer remaining balance", { balance: toNano(balance), payment });
+
                     const wallet = await this.walletService.createWallet(payment.walletAccount, 0, payment.walletIndex);
+
                     return await this.transfer(wallet);
                 }
                 await this.PaymentService.updatePayment({ id: payment.id }, { paymentStatus: "ACCEPT" });
+
                 this.logger.log("Payment accepted", payment);
             }
         }
@@ -70,11 +85,14 @@ export class TonService implements OnModuleInit {
             const transactions = await this.client.getTransactions(Address.parse(publicKey), {
                 limit: 5,
             });
+
             this.logger.log("Check transactions", { publicKey, transactions });
+
             const results: Array<TransactionType> = [];
 
             for (const tx of transactions) {
                 if (tx.inMessage && tx.inMessage.info.type === "internal") {
+
                     const value = fromNano(tx.inMessage.info.value.coins);
                     const source = tx.inMessage.info.src.toString();
 
@@ -94,9 +112,13 @@ export class TonService implements OnModuleInit {
     }
     async transfer(keyPair: KeyPair) {
         try {
+
             const wallet = this.walletService.createContractWallet(keyPair);
+
             const contract = this.client.open(wallet);
+
             const seqno = await contract.getSeqno();
+
             return await contract.sendTransfer({
                 seqno,
                 secretKey: keyPair.secretKey,
